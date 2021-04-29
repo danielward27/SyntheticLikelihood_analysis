@@ -1,0 +1,6 @@
+task,run_time,acceptance_rate
+gaussian_linear,1145.263402002,0.163
+gaussian_linear_uniform,1112.0429596879999,0.4186666666666667
+gaussian_mixture,670.398190505,0.001
+sir,9387.101666224,0.5
+bernoulli_glm,1209.877468064,0.117
