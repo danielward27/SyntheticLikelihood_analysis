@@ -1,4 +1,0 @@
-bernoulli_glm	8.013917492
-gaussian_mixture	0.431286341
-gaussian_linear	0.864271022
-gaussian_linear_uniform	2.168114275

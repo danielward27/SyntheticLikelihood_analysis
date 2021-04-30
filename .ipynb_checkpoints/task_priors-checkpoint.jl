@@ -11,8 +11,8 @@ begin
     gaussian_linear = Prior([MvNormal(fill(√0.1, 10))]),
     gaussian_linear_uniform = Prior(fill(Uniform(-1,1), 10)),
     gaussian_mixture = Prior(fill(Uniform(-10, 10), 2)),
-    sir = Prior([LogNormal(log(0.4), 0.5), LogNormal(log(1/8), 0.2)]),
-    bernoulli_glm = Prior([Normal(0,2), MvNormalCanon(Λ)]),
+    bernoulli_glm = Prior([Normal(0,2), MvNormalCanon(Λ)])
+    # sir = Prior([LogNormal(log(0.4), 0.5), LogNormal(log(1/8), 0.2)]), takes a little while
     # bernoulli_glm_raw = Prior([Normal(0,2), MvNormalCanon(Λ)])  # 100d statistics
     # slcp = Prior(fill(Uniform(-3, 3), 5)),  # Bi/Multimodal
     # slcp_distractors = Prior(fill(Uniform(-3, 3), 5)), # Bi/Multimodal
