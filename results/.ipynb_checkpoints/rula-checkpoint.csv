@@ -1,0 +1,5 @@
+task,run_time
+gaussian_linear,1648.154513637
+gaussian_linear_uniform,1580.158198527
+gaussian_mixture,734.566934982
+bernoulli_glm,1639.482386328
