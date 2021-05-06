@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Imports
 ```{r}
 library(tidyverse)
+library(patchwork)
 theme_set(theme_bw())
 ```
 
@@ -36,7 +37,56 @@ ggplot(df, aes(y = run_time, x = task, col = algorithm)) +
   lims(y = c(0,2000))
 ggsave("plots/run_times.png")
 ```
+Simulations are s significant proportion of the run time. Next we consider a MVN example in julia to look at the cost (per MCMC iteration).
 
+### Run time with number of summary statistics
+```{r}
+df_s_times = read_csv("results/mvn_times_sum_stats.csv")
+
+df_s_times = df_s_times %>%
+  pivot_longer(cols = c(rula_time_per_step, rwm_time_per_step),
+               names_to = "Algorithm", values_to = "Time (seconds/step)") %>%
+  rename("Number of summary statistics" = n_sum_stats)
+
+df_s_times$Algorithm[df_s_times$Algorithm == "rula_time_per_step"] = "RULA"
+df_s_times$Algorithm[df_s_times$Algorithm == "rwm_time_per_step"] = "RWM"
+
+p1 = df_s_times %>%
+  ggplot(aes(x = `Number of summary statistics`,
+             y = `Time (seconds/step)`, col = Algorithm)) +
+  geom_point() +
+  geom_line() +
+  theme(legend.position = "none")
+
+```
+
+
+### Run time with number of parameters
+```{r}
+df_theta_times = read_csv("results/mvn_times_parameters.csv")
+
+df_theta_times
+df_theta_times = df_theta_times %>%
+  pivot_longer(cols = c(rula_time_per_step, rwm_time_per_step),
+               names_to = "Algorithm", values_to = "Time (seconds/step)") %>%
+  rename("Number of paramters" = n_parameters)
+
+df_theta_times$Algorithm[df_theta_times$Algorithm == "rula_time_per_step"] = "RULA"
+df_theta_times$Algorithm[df_theta_times$Algorithm == "rwm_time_per_step"] = "RWM"
+
+p2 = df_theta_times %>%
+  ggplot(aes(x = `Number of paramters`,
+             y = `Time (seconds/step)`, col = Algorithm)) +
+  geom_line() +
+  geom_point() +
+  labs(y = "")
+
+```
+
+```{r}
+p1 + p2
+ggsave("plots/run_times_mvn_example.png", width = 7, height = 4)
+```
 
 ## Effective sample sizes
 We can compare the effective sample sizes of the two algorithms. The lines show
