@@ -22,14 +22,10 @@ theme_set(theme_bw())
 df = read_csv("results/general_performance.csv")
 df = select(df, -X1)
 df$algorithm[df$algorithm == "rula"] = "RULA"
-df$algorithm[df$algorithm == "rwm"] = "RW-Metropolis"
+df$algorithm[df$algorithm == "rwm"] = "RWM"
+df$algorithm[df$algorithm == "snle"] = "SNLE"
 df
 ```
-
-```{r}
-read_csv("results")
-```
-
 
 
 ## Run times
@@ -38,8 +34,7 @@ We can compare the run times of the two algorithms:
 ggplot(df, aes(y = run_time, x = task, col = algorithm)) +
   geom_point() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-  labs(y = "run time / s") +
-  lims(y = c(0,2000))
+  labs(y = "run time / s")
 ggsave("plots/run_times.png")
 ```
 Simulations are s significant proportion of the run time. Next we consider a MVN example in julia to look at the cost (per MCMC iteration).
@@ -66,7 +61,6 @@ p1 = df_s_times %>%
 p1
 
 ```
-
 
 ### Run time with number of parameters
 ```{r}
@@ -102,24 +96,36 @@ We can compare the effective sample sizes of the two algorithms. The lines show
 the max and min.
 
 ```{r}
-ggplot(df, aes(x = task, y = mean_ess, col = algorithm)) +
-  geom_point() +
-  geom_pointrange(aes(ymin = min_ess, ymax = max_ess), alpha = 0.5) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-  ylab("mean ESS")
-ggsave("plots/ess.png")
+df %>%
+  filter(algorithm != "SNLE") %>%
+  ggplot(aes(x = task, y = mean_ess, col = algorithm)) +
+    geom_point() +
+    geom_pointrange(aes(ymin = min_ess, ymax = max_ess), alpha = 0.5) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    ylab("mean ESS")
+  ggsave("plots/ess.png")
 ```
+
+And SNLE effective sample sizes
+```{r}
+df %>%
+  filter(algorithm == "SNLE") %>%
+  ggplot(aes(x = task, y = mean_ess, col = algorithm)) +
+    geom_point() +
+    geom_pointrange(aes(ymin = min_ess, ymax = max_ess), alpha = 0.5) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    ylab("mean ESS")
+
+ggsave("plots/ess_snle.png")
+
+```
+
+
 
 ## Classification accuracy
 ```{r}
 df %>%
-  pivot_longer(cols = c(c2st_all, c2st_thinned), names_to = "thinned", values_to = "c2st") %>%
-  mutate(thinned = case_when(
-    thinned == "c2st_thinned" ~ "Thinned",
-    thinned == "c2st_all" ~ "All samples"
-    )) %>%
-  ggplot(aes(x = task, y = c2st, col = algorithm), names_to = c("l")) +
-  facet_wrap(~thinned) +
+  ggplot(aes(x = task, y = c2st_all, col = algorithm), names_to = c("l")) +
   geom_point() + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   lims(y = c(0.5,1))
@@ -130,7 +136,7 @@ ggsave("plots/c2st.png")
 ## Acceptance probabilities
 ```{r}
 df %>%
-  filter(algorithm == "RW-Metropolis") %>%
+  filter(algorithm == "RWM") %>%
   ggplot(aes(x = task, y = acceptance_rate)) +
   geom_point() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
