@@ -56,7 +56,9 @@ p1 = df_s_times %>%
              y = `Time (seconds/step)`, col = Algorithm)) +
   geom_point() +
   geom_line() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  annotate("text", x=13, y=0.82, label = "s∈R^10")
+p1
 
 ```
 
@@ -69,23 +71,25 @@ df_theta_times
 df_theta_times = df_theta_times %>%
   pivot_longer(cols = c(rula_time_per_step, rwm_time_per_step),
                names_to = "Algorithm", values_to = "Time (seconds/step)") %>%
-  rename("Number of paramters" = n_parameters)
+  rename("Number of parameters" = n_parameters)
 
 df_theta_times$Algorithm[df_theta_times$Algorithm == "rula_time_per_step"] = "RULA"
 df_theta_times$Algorithm[df_theta_times$Algorithm == "rwm_time_per_step"] = "RWM"
 
 p2 = df_theta_times %>%
-  ggplot(aes(x = `Number of paramters`,
+  ggplot(aes(x = `Number of parameters`,
              y = `Time (seconds/step)`, col = Algorithm)) +
   geom_line() +
   geom_point() +
-  labs(y = "")
+  labs(y = "") +
+  annotate("text", x=13, y=2.5, label = "s∈R^10")
+p2
 
 ```
 
 ```{r}
 p1 + p2
-ggsave("plots/run_times_mvn_example.png", width = 7, height = 4)
+ggsave("plots/run_times_mvn_example.png", width = 8, height = 4)
 ```
 
 ## Effective sample sizes
