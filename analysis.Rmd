@@ -45,7 +45,7 @@ df_s_times = read_csv("results/mvn_times_sum_stats.csv")
 
 df_s_times = df_s_times %>%
   pivot_longer(cols = c(rula_time_per_step, rwm_time_per_step),
-               names_to = "Algorithm", values_to = "Time (seconds/step)") %>%
+               names_to = "Algorithm", values_to = "Time / seconds/step") %>%
   rename("Number of summary statistics" = n_sum_stats)
 
 df_s_times$Algorithm[df_s_times$Algorithm == "rula_time_per_step"] = "RULA"
@@ -53,11 +53,11 @@ df_s_times$Algorithm[df_s_times$Algorithm == "rwm_time_per_step"] = "RWM"
 
 p1 = df_s_times %>%
   ggplot(aes(x = `Number of summary statistics`,
-             y = `Time (seconds/step)`, col = Algorithm)) +
+             y = `Time / seconds/step`, col = Algorithm)) +
   geom_point() +
   geom_line() +
   theme(legend.position = "none") +
-  annotate("text", x=13, y=0.82, label = "s∈R^10")
+  annotate("text", x=13, y=0.82, label = "θ∈R^10")
 p1
 
 ```
@@ -81,7 +81,7 @@ p2 = df_theta_times %>%
   geom_line() +
   geom_point() +
   labs(y = "") +
-  annotate("text", x=12.7, y=2.6, label = "θ∈R^10")
+  annotate("text", x=12.7, y=2.6, label = "s∈R^10")
 p2
 
 ```
@@ -103,7 +103,7 @@ df %>%
     geom_pointrange(aes(ymin = min_ess, ymax = max_ess), alpha = 0.5) +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
     ylab("mean ESS")
-  ggsave("plots/ess.png")
+ggsave("plots/ess.png")
 ```
 
 And SNLE effective sample sizes
@@ -128,12 +128,19 @@ df %>%
   ggplot(aes(x = task, y = c2st_all, col = algorithm), names_to = c("l")) +
   geom_point() + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-  lims(y = c(0.5,1))
+  lims(y = c(0.5,1)) +
+  labs(y = "C2ST")
 ggsave("plots/c2st.png")
 ```
 
 
 ## Acceptance probabilities
+```{r}
+print(min(df$acceptance_rate, na.rm = TRUE))
+print(max(df$acceptance_rate, na.rm = TRUE))
+```
+
+
 ```{r}
 df %>%
   filter(algorithm == "RWM") %>%
