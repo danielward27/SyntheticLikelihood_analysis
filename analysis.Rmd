@@ -20,7 +20,6 @@ theme_set(theme_bw())
 ## Read in results
 ```{r}
 df = read_csv("results/general_performance.csv")
-df = select(df, -X1)
 df$algorithm[df$algorithm == "rula"] = "RULA"
 df$algorithm[df$algorithm == "rwm"] = "RWM"
 df$algorithm[df$algorithm == "snle"] = "SNLE"
@@ -133,6 +132,27 @@ df %>%
 ggsave("plots/c2st.png")
 ```
 
+## Thinned classification accuracy
+```{r}
+df %>%
+  ggplot(aes(x = task, y = c2st_thinned, col = algorithm), names_to = c("l")) +
+  geom_point() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(y = "C2ST")
+ggsave("plots/c2st_thinned.png")
+```
+
+
+## KDE classification accuracy
+```{r}
+df %>%
+  ggplot(aes(x = task, y = c2st_kde, col = algorithm), names_to = c("l")) +
+  geom_point() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(y = "C2ST")
+ggsave("plots/c2st_kde.png")
+```
+
 
 ## Acceptance probabilities
 ```{r}
@@ -150,5 +170,22 @@ df %>%
   lims(y = c(0, 0.6))
 
 ggsave("plots/acceptance_rates.png")
+```
+
+
+## KDE check
+
+```{r}
+kde_df = read_csv("results/kde_check.csv") %>%
+  pivot_longer(cols = c(no_kde_c2st, kde_c2st), values_to = "C2ST", names_to = "KDE")
+
+kde_df$KDE = kde_df$KDE == "kde_c2st"
+
+
+ggplot(kde_df, aes(x = task, y = C2ST, col = KDE)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+
 ```
 
